@@ -1,0 +1,21 @@
+.wall {
+    background-color: black;
+
+    
+}
+.blank {
+    background-color: red;
+
+
+}
+
+.mazeSquare { 
+    width:1em;
+    height:1em;
+    float:left;
+    color: white;
+}
+
+#mazeContainer {
+    display: grid;
+}
