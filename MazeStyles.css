@@ -4,6 +4,8 @@
     height:1em;
     float:left;
     color: white;
+    padding: 0.01em;
+
     }
 
 #mazeContainer {
@@ -12,16 +14,20 @@
 
 .leftWall {
     border-left: 0.01em solid black;
+    padding-left: 0em;
 }
 
 .topWall {
     border-top: 0.01em solid black;
+    padding-top: 0em;
 }
 
 .rightWall {
     border-right: 0.01em solid black;
+    padding-right: 0em;
 }
 
 .bottomWall {
     border-bottom: 0.01em solid black;
+    padding-bottom: 0em;
 }
