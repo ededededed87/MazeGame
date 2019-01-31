@@ -1,6 +1,6 @@
-var columnNumber = 3;
-var rowNumber = 2;
-var mazeSize = 48;
+var columnNumber = 0;
+var rowNumber = 0;
+var mazeSize = 22;
 var verticalWalls = [];
 
 var topWall = "topWall";
@@ -8,9 +8,13 @@ var bottomWall = "bottomWall";
 var leftWall = "leftWall";
 var rightWall = "rightWall";
 
+var personUnicodeSymbol = "\u26F9"
+var doorUnicodeSymbol = "\ud83d\udeaa"
+var visitedSquares = [0];
+
 document.addEventListener('DOMContentLoaded', function () {
     loadMaze();
-    generateMaze(1);
+    generateMaze(0);
 }, false);
 
 
@@ -26,7 +30,16 @@ function getGridHtml() {
         htmlString += "<div class=mazeRow id=row" + i + ">";
         for (var j = 0; j < mazeSize; j++) {
 
-            htmlString += "<div class=\"mazeSquare leftWall topWall rightWall bottomWall\" id=mazeCellRow" + i + "Column" + j + "></div>";
+            if (i == 0 && j == 0) {
+                htmlString += "<div class=\"mazeSquare leftWall topWall rightWall bottomWall\" id=mazeCellRow" + i + "Column" + j + ">" + personUnicodeSymbol + "</div>";
+            }
+            else if (i == 1 && j == 1) {
+                htmlString += "<div class=\"mazeSquare leftWall topWall rightWall bottomWall\" id=mazeCellRow" + i + "Column" + j + ">" + doorUnicodeSymbol + "</div>";
+            }
+            else {
+
+                htmlString += "<div class=\"mazeSquare leftWall topWall rightWall bottomWall\" id=mazeCellRow" + i + "Column" + j + "></div>";
+            }
         }
 
         htmlString += "</div>";
@@ -37,7 +50,7 @@ function getGridHtml() {
 }
 
 
-var visitedSquares = [0];
+
 var position = 0;
 
 function generateMaze(startingPosition) {
@@ -89,6 +102,7 @@ function generateMaze(startingPosition) {
                     index = allowedDirections.indexOf("up");
                     allowedDirections.splice(index, 1);
                     randomDirection = allowedDirections[Math.floor(Math.random() * allowedDirections.length)]
+                    break;
                 }
 
             case "down":
@@ -106,6 +120,7 @@ function generateMaze(startingPosition) {
                     index = allowedDirections.indexOf("down");
                     allowedDirections.splice(index, 1);
                     randomDirection = allowedDirections[Math.floor(Math.random() * allowedDirections.length)]
+                    break;
                 }
 
             case "left":
@@ -122,6 +137,7 @@ function generateMaze(startingPosition) {
                     index = allowedDirections.indexOf("left");
                     allowedDirections.splice(index, 1);
                     randomDirection = allowedDirections[Math.floor(Math.random() * allowedDirections.length)]
+                    break;
                 }
 
             case "right":
@@ -138,6 +154,7 @@ function generateMaze(startingPosition) {
                     index = allowedDirections.indexOf("right");
                     allowedDirections.splice(index, 1);
                     randomDirection = allowedDirections[Math.floor(Math.random() * allowedDirections.length)]
+                    break;
                 }
             default:
                 return;
@@ -145,66 +162,54 @@ function generateMaze(startingPosition) {
     }
 }
 
-    function getRowFromPositionNumber(positionNumber) {
+function getRowFromPositionNumber(positionNumber) {
 
-        return Math.floor(positionNumber / mazeSize);
+    return Math.floor(positionNumber / mazeSize);
 
+}
+
+function getColumnFromPositionNumber(positionNumber) {
+
+    return positionNumber % mazeSize;
+
+}
+
+document.onkeydown = function (e) {
+    switch (e.keyCode) {
+        case 37:
+            moveLeft();
+            break;
+        case 38:
+            moveUp();
+            break;
+        case 39:
+            moveRight();
+            break;
+        case 40:
+            moveDown();
+            break;
     }
+};
 
-    function getColumnFromPositionNumber(positionNumber) {
+var moveLeft = function () {
+    if (columnNumber >= 0) {
+        var newColumnNumber = columnNumber - 1;
 
-        return positionNumber % mazeSize;
-
-    }
-
-    document.onkeydown = function (e) {
-        switch (e.keyCode) {
-            case 37:
-                moveLeft();
-                break;
-            case 38:
-                moveUp();
-                break;
-            case 39:
-                moveRight();
-                break;
-            case 40:
-                moveDown();
-                break;
-        }
-    };
-
-    var moveLeft = function () {
-        if (columnNumber >= 0) {
-            var newColumnNumber = columnNumber - 1;
-
-            if (document.getElementById("mazeCellRow" + rowNumber + "Column" + newColumnNumber) !== null) {
-                moveCharacter(columnNumber, rowNumber, newColumnNumber, rowNumber);
-            }
-            else {
-                window.alert("You can't move left");
-            }
-
-        }
-        else {
-            window.alert("You can't move left");
+        if (!document.getElementById("mazeCellRow" + rowNumber + "Column" + columnNumber).classList.contains(leftWall) &&
+            !document.getElementById("mazeCellRow" + rowNumber + "Column" + newColumnNumber).classList.contains(rightWall)) {
+            moveCharacter(columnNumber, rowNumber, newColumnNumber, rowNumber);
         }
     }
+}
 
     var moveUp = function () {
         if (rowNumber >= 0) {
             var newRowNumber = rowNumber - 1;
 
-            if (document.getElementById("mazeCellRow" + newRowNumber + "Column" + columnNumber) !== null) {
+            if (!document.getElementById("mazeCellRow" + rowNumber + "Column" + columnNumber).classList.contains(topWall) &&
+                !document.getElementById("mazeCellRow" + newRowNumber + "Column" + columnNumber).classList.contains(bottomWall)) {
                 moveCharacter(columnNumber, rowNumber, columnNumber, newRowNumber);
             }
-            else {
-                window.alert("You can't move up");
-            }
-
-        }
-        else {
-            window.alert("You can't move up");
         }
     }
 
@@ -213,16 +218,10 @@ function generateMaze(startingPosition) {
         if (columnNumber <= mazeSize - 1) {
             var newColumnNumber = columnNumber + 1;
 
-            if (document.getElementById("mazeCellRow" + rowNumber + "Column" + newColumnNumber) !== null) {
+            if (!document.getElementById("mazeCellRow" + rowNumber + "Column" + columnNumber).classList.contains(rightWall) &&
+                !document.getElementById("mazeCellRow" + rowNumber + "Column" + newColumnNumber).classList.contains(leftWall)) {
                 moveCharacter(columnNumber, rowNumber, newColumnNumber, rowNumber);
             }
-            else {
-                window.alert("You can't move right");
-            }
-
-        }
-        else {
-            window.alert("You can't move right");
         }
     }
 
@@ -230,23 +229,28 @@ function generateMaze(startingPosition) {
         if (rowNumber <= mazeSize - 1) {
             var newRowNumber = rowNumber + 1;
 
-            if (document.getElementById("mazeCellRow" + newRowNumber + "Column" + columnNumber) !== null) {
+            if (!document.getElementById("mazeCellRow" + rowNumber + "Column" + columnNumber).classList.contains(bottomWall) &&
+                !document.getElementById("mazeCellRow" + newRowNumber + "Column" + columnNumber).classList.contains(topWall)) {
                 moveCharacter(columnNumber, rowNumber, columnNumber, newRowNumber);
             }
-            else {
-                window.alert("You can't move down");
-            }
-
-        }
-        else {
-            window.alert("You can't move down");
         }
     }
 
 
     var moveCharacter = function (currentColumn, currentRow, newColumn, newRow) {
         document.getElementById("mazeCellRow" + currentRow + "Column" + currentColumn).innerHTML = "";
-        document.getElementById("mazeCellRow" + newRow + "Column" + newColumn).innerHTML = "\u26F9";
+        document.getElementById("mazeCellRow" + newRow + "Column" + newColumn).innerHTML = personUnicodeSymbol;
         columnNumber = newColumn;
         rowNumber = newRow;
+
+        if (rowNumber == 1 && columnNumber == 1) {
+            window.alert("You win!");
+            resetMaze();
+        }
+    }
+
+    var resetMaze = function() {
+        document.getElementById("mazeContainer").innerHTML = "";
+        loadMaze();
+        generateMaze(0);
     }
