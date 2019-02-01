@@ -1,6 +1,6 @@
 var columnNumber = 0;
 var rowNumber = 0;
-var mazeSize = 22;
+var mazeSize = 25;
 var verticalWalls = [];
 
 var topWall = "topWall";
@@ -33,7 +33,7 @@ function getGridHtml() {
             if (i == 0 && j == 0) {
                 htmlString += "<div class=\"mazeSquare leftWall topWall rightWall bottomWall\" id=mazeCellRow" + i + "Column" + j + ">" + personUnicodeSymbol + "</div>";
             }
-            else if (i == 1 && j == 1) {
+            else if (i == mazeSize - 1 && j == mazeSize - 1) {
                 htmlString += "<div class=\"mazeSquare leftWall topWall rightWall bottomWall\" id=mazeCellRow" + i + "Column" + j + ">" + doorUnicodeSymbol + "</div>";
             }
             else {
@@ -243,7 +243,7 @@ var moveLeft = function () {
         columnNumber = newColumn;
         rowNumber = newRow;
 
-        if (rowNumber == 1 && columnNumber == 1) {
+        if (rowNumber == mazeSize - 1 && columnNumber == mazeSize - 1) {
             window.alert("You win!");
             resetMaze();
         }
