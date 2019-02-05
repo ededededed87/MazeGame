@@ -1,7 +1,6 @@
 var columnNumber = 0;
 var rowNumber = 0;
-var mazeSize = 25;
-var verticalWalls = [];
+var mazeSize = 20;
 
 var topWall = "topWall";
 var bottomWall = "bottomWall";
@@ -12,15 +11,37 @@ var personUnicodeSymbol = "\u26F9"
 var doorUnicodeSymbol = "\ud83d\udeaa"
 var visitedSquares = [0];
 
+var shortestPath = [];
+var notInShortestPath = [];
+
 document.addEventListener('DOMContentLoaded', function () {
     loadMaze();
     generateMaze(0);
+    solveMaze();
 }, false);
 
 
 function loadMaze() {
     var mazeContainer = document.getElementById("mazeContainer");
     mazeContainer.innerHTML = (getGridHtml());
+
+}
+
+function solveMaze() {
+
+    for (i = 0; i < shortestPath.length; i++) {
+        document.getElementById("mazeCellRow" + getRowFromPositionNumber(shortestPath[i]) + "Column" + getColumnFromPositionNumber(shortestPath[i])).classList.add("highlighted");
+    }
+
+    for (i = 0; i < notInShortestPath.length; i++) {
+        if (document.getElementById("mazeCellRow" + getRowFromPositionNumber(shortestPath[i]) + "Column" + getColumnFromPositionNumber(shortestPath[i])) != null && 
+            document.getElementById("mazeCellRow" + getRowFromPositionNumber(shortestPath[i]) + "Column" + getColumnFromPositionNumber(shortestPath[i])).classList.contains("highlighted")) {
+            
+            document.getElementById("mazeCellRow" + getRowFromPositionNumber(shortestPath[i]) + "Column" + getColumnFromPositionNumber(shortestPath[i])).classList.remove("highlighted");
+
+        }
+        
+    }
 
 }
 
@@ -52,11 +73,17 @@ function getGridHtml() {
 
 
 var position = 0;
+var pathFoundFlag = false;
 
 function generateMaze(startingPosition) {
 
     if (!visitedSquares.includes(startingPosition)) {
         visitedSquares.push(startingPosition);
+    }
+
+    if (startingPosition == ((mazeSize * mazeSize) - 1) && !pathFoundFlag) {
+        shortestPath = visitedSquares.slice(0);
+        pathFoundFlag = true;
     }
 
     position = startingPosition;
@@ -78,6 +105,7 @@ function generateMaze(startingPosition) {
         visitedSquares.includes(squareLeftOfCurrentPosition) &&
         visitedSquares.includes(squareRightOfCurrentPosition)
     ) {
+        notInShortestPath.push(visitedSquares[indexOfCurrentPosition]);
         generateMaze(visitedSquares[indexOfCurrentPosition - 1]);
         return;
     }
@@ -86,7 +114,8 @@ function generateMaze(startingPosition) {
 
     var randomDirection = allowedDirections[Math.floor(Math.random() * allowedDirections.length)]
 
-    while (true) {
+    var test = true;
+    while (test) {
         switch (randomDirection) {
             case "up":
                 if (!visitedSquares.includes(squareAboveCurrentPosition)) {
@@ -95,6 +124,7 @@ function generateMaze(startingPosition) {
                     position = position - mazeSize;
                     document.getElementById("mazeCellRow" + getRowFromPositionNumber(position) + "Column" + getColumnFromPositionNumber(position)).classList.remove(bottomWall);
                     generateMaze(position);
+                    test = false;
                     break;
 
                 }
@@ -113,6 +143,7 @@ function generateMaze(startingPosition) {
                     position = position + mazeSize;
                     document.getElementById("mazeCellRow" + getRowFromPositionNumber(position) + "Column" + getColumnFromPositionNumber(position)).classList.remove(topWall);
                     generateMaze(position);
+                    test = false;
                     break;
 
                 }
@@ -130,6 +161,7 @@ function generateMaze(startingPosition) {
                     position = position - 1;
                     document.getElementById("mazeCellRow" + getRowFromPositionNumber(position) + "Column" + getColumnFromPositionNumber(position)).classList.remove(rightWall);
                     generateMaze(position);
+                    test = false;
                     break;
 
                 }
@@ -148,6 +180,7 @@ function generateMaze(startingPosition) {
                     position = position + 1;
                     document.getElementById("mazeCellRow" + getRowFromPositionNumber(position) + "Column" + getColumnFromPositionNumber(position)).classList.remove(leftWall);
                     generateMaze(position);
+                    test = false;
                     break;
                 }
                 else {
@@ -214,7 +247,6 @@ var moveLeft = function () {
     }
 
     var moveRight = function () {
-
         if (columnNumber <= mazeSize - 1) {
             var newColumnNumber = columnNumber + 1;
 
