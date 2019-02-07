@@ -17,9 +17,25 @@ var notInShortestPath = [];
 document.addEventListener('DOMContentLoaded', function () {
     loadMaze();
     generateMaze(0);
-    solveMaze();
+    // solveMaze();
 }, false);
 
+function turnPathOn() {
+    solveMaze();
+}
+
+function turnPathOff() {
+
+    for (var i = 0; i < mazeSize * mazeSize; i++) {
+        
+            if (document.getElementById("mazeCellRow" + getRowFromPositionNumber(i) + "Column" + getColumnFromPositionNumber(i)) != null &&
+                document.getElementById("mazeCellRow" + getRowFromPositionNumber(i) + "Column" + getColumnFromPositionNumber(i)).classList.contains("highlighted")) {
+
+                document.getElementById("mazeCellRow" + getRowFromPositionNumber(i) + "Column" + getColumnFromPositionNumber(i)).classList.remove("highlighted");
+
+            }
+        }
+    }
 
 function loadMaze() {
     var mazeContainer = document.getElementById("mazeContainer");
@@ -29,19 +45,23 @@ function loadMaze() {
 
 function solveMaze() {
 
+
+
     for (i = 0; i < shortestPath.length; i++) {
         document.getElementById("mazeCellRow" + getRowFromPositionNumber(shortestPath[i]) + "Column" + getColumnFromPositionNumber(shortestPath[i])).classList.add("highlighted");
     }
 
     for (i = 0; i < notInShortestPath.length; i++) {
-        if (document.getElementById("mazeCellRow" + getRowFromPositionNumber(shortestPath[i]) + "Column" + getColumnFromPositionNumber(shortestPath[i])) != null && 
-            document.getElementById("mazeCellRow" + getRowFromPositionNumber(shortestPath[i]) + "Column" + getColumnFromPositionNumber(shortestPath[i])).classList.contains("highlighted")) {
-            
-            document.getElementById("mazeCellRow" + getRowFromPositionNumber(shortestPath[i]) + "Column" + getColumnFromPositionNumber(shortestPath[i])).classList.remove("highlighted");
+        if (document.getElementById("mazeCellRow" + getRowFromPositionNumber(notInShortestPath[i]) + "Column" + getColumnFromPositionNumber(notInShortestPath[i])) != null &&
+            document.getElementById("mazeCellRow" + getRowFromPositionNumber(notInShortestPath[i]) + "Column" + getColumnFromPositionNumber(notInShortestPath[i])).classList.contains("highlighted")) {
+
+            document.getElementById("mazeCellRow" + getRowFromPositionNumber(notInShortestPath[i]) + "Column" + getColumnFromPositionNumber(notInShortestPath[i])).classList.remove("highlighted");
 
         }
-        
+
     }
+
+
 
 }
 
@@ -83,6 +103,11 @@ function generateMaze(startingPosition) {
 
     if (startingPosition == ((mazeSize * mazeSize) - 1) && !pathFoundFlag) {
         shortestPath = visitedSquares.slice(0);
+        for (i = 0; i < mazeSize * mazeSize - 1; i++) {
+            if (!visitedSquares.includes(i)) {
+                notInShortestPath.push(i);
+            }
+        }
         pathFoundFlag = true;
     }
 
@@ -105,9 +130,12 @@ function generateMaze(startingPosition) {
         visitedSquares.includes(squareLeftOfCurrentPosition) &&
         visitedSquares.includes(squareRightOfCurrentPosition)
     ) {
-        notInShortestPath.push(visitedSquares[indexOfCurrentPosition]);
+        if (!notInShortestPath.includes(visitedSquares[indexOfCurrentPosition]) && !pathFoundFlag) {
+            notInShortestPath.push(visitedSquares[indexOfCurrentPosition]);
+        }
         generateMaze(visitedSquares[indexOfCurrentPosition - 1]);
         return;
+
     }
 
     var allowedDirections = ["up", "down", "left", "right"]
@@ -195,6 +223,10 @@ function generateMaze(startingPosition) {
     }
 }
 
+function getPositionFromRowAndColumn(row, column) {
+    return ((mazeSize * (row)) + column);
+}
+
 function getRowFromPositionNumber(positionNumber) {
 
     return Math.floor(positionNumber / mazeSize);
@@ -235,54 +267,54 @@ var moveLeft = function () {
     }
 }
 
-    var moveUp = function () {
-        if (rowNumber >= 0) {
-            var newRowNumber = rowNumber - 1;
+var moveUp = function () {
+    if (rowNumber >= 0) {
+        var newRowNumber = rowNumber - 1;
 
-            if (!document.getElementById("mazeCellRow" + rowNumber + "Column" + columnNumber).classList.contains(topWall) &&
-                !document.getElementById("mazeCellRow" + newRowNumber + "Column" + columnNumber).classList.contains(bottomWall)) {
-                moveCharacter(columnNumber, rowNumber, columnNumber, newRowNumber);
-            }
+        if (!document.getElementById("mazeCellRow" + rowNumber + "Column" + columnNumber).classList.contains(topWall) &&
+            !document.getElementById("mazeCellRow" + newRowNumber + "Column" + columnNumber).classList.contains(bottomWall)) {
+            moveCharacter(columnNumber, rowNumber, columnNumber, newRowNumber);
         }
     }
+}
 
-    var moveRight = function () {
-        if (columnNumber <= mazeSize - 1) {
-            var newColumnNumber = columnNumber + 1;
+var moveRight = function () {
+    if (columnNumber <= mazeSize - 1) {
+        var newColumnNumber = columnNumber + 1;
 
-            if (!document.getElementById("mazeCellRow" + rowNumber + "Column" + columnNumber).classList.contains(rightWall) &&
-                !document.getElementById("mazeCellRow" + rowNumber + "Column" + newColumnNumber).classList.contains(leftWall)) {
-                moveCharacter(columnNumber, rowNumber, newColumnNumber, rowNumber);
-            }
+        if (!document.getElementById("mazeCellRow" + rowNumber + "Column" + columnNumber).classList.contains(rightWall) &&
+            !document.getElementById("mazeCellRow" + rowNumber + "Column" + newColumnNumber).classList.contains(leftWall)) {
+            moveCharacter(columnNumber, rowNumber, newColumnNumber, rowNumber);
         }
     }
+}
 
-    var moveDown = function () {
-        if (rowNumber <= mazeSize - 1) {
-            var newRowNumber = rowNumber + 1;
+var moveDown = function () {
+    if (rowNumber <= mazeSize - 1) {
+        var newRowNumber = rowNumber + 1;
 
-            if (!document.getElementById("mazeCellRow" + rowNumber + "Column" + columnNumber).classList.contains(bottomWall) &&
-                !document.getElementById("mazeCellRow" + newRowNumber + "Column" + columnNumber).classList.contains(topWall)) {
-                moveCharacter(columnNumber, rowNumber, columnNumber, newRowNumber);
-            }
+        if (!document.getElementById("mazeCellRow" + rowNumber + "Column" + columnNumber).classList.contains(bottomWall) &&
+            !document.getElementById("mazeCellRow" + newRowNumber + "Column" + columnNumber).classList.contains(topWall)) {
+            moveCharacter(columnNumber, rowNumber, columnNumber, newRowNumber);
         }
     }
+}
 
 
-    var moveCharacter = function (currentColumn, currentRow, newColumn, newRow) {
-        document.getElementById("mazeCellRow" + currentRow + "Column" + currentColumn).innerHTML = "";
-        document.getElementById("mazeCellRow" + newRow + "Column" + newColumn).innerHTML = personUnicodeSymbol;
-        columnNumber = newColumn;
-        rowNumber = newRow;
+var moveCharacter = function (currentColumn, currentRow, newColumn, newRow) {
+    document.getElementById("mazeCellRow" + currentRow + "Column" + currentColumn).innerHTML = "";
+    document.getElementById("mazeCellRow" + newRow + "Column" + newColumn).innerHTML = personUnicodeSymbol;
+    columnNumber = newColumn;
+    rowNumber = newRow;
 
-        if (rowNumber == mazeSize - 1 && columnNumber == mazeSize - 1) {
-            window.alert("You win!");
-            resetMaze();
-        }
+    if (rowNumber == mazeSize - 1 && columnNumber == mazeSize - 1) {
+        window.alert("You win!");
+        resetMaze();
     }
+}
 
-    var resetMaze = function() {
-        document.getElementById("mazeContainer").innerHTML = "";
-        loadMaze();
-        generateMaze(0);
-    }
+var resetMaze = function () {
+    document.getElementById("mazeContainer").innerHTML = "";
+    loadMaze();
+    generateMaze(0);
+}
