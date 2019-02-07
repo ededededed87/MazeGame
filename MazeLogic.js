@@ -1,6 +1,6 @@
 var columnNumber = 0;
 var rowNumber = 0;
-var mazeSize = 20;
+var mazeSize = 8;
 
 var topWall = "topWall";
 var bottomWall = "bottomWall";
@@ -316,5 +316,14 @@ var moveCharacter = function (currentColumn, currentRow, newColumn, newRow) {
 var resetMaze = function () {
     document.getElementById("mazeContainer").innerHTML = "";
     loadMaze();
+    resetVariables();
     generateMaze(0);
+}
+
+function resetVariables(){
+    visitedSquares = [];
+    shortestPath = [];
+    notInShortestPath = [];
+    columnNumber = 0;
+    rowNumber = 0;
 }
