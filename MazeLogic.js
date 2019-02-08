@@ -1,6 +1,6 @@
 var columnNumber = 0;
 var rowNumber = 0;
-var mazeSize = 8;
+var mazeSize = 20;
 
 var topWall = "topWall";
 var bottomWall = "bottomWall";
@@ -17,7 +17,6 @@ var notInShortestPath = [];
 document.addEventListener('DOMContentLoaded', function () {
     loadMaze();
     generateMaze(0);
-    // solveMaze();
 }, false);
 
 function turnPathOn() {
@@ -45,8 +44,6 @@ function loadMaze() {
 
 function solveMaze() {
 
-
-
     for (i = 0; i < shortestPath.length; i++) {
         document.getElementById("mazeCellRow" + getRowFromPositionNumber(shortestPath[i]) + "Column" + getColumnFromPositionNumber(shortestPath[i])).classList.add("highlighted");
     }
@@ -58,11 +55,7 @@ function solveMaze() {
             document.getElementById("mazeCellRow" + getRowFromPositionNumber(notInShortestPath[i]) + "Column" + getColumnFromPositionNumber(notInShortestPath[i])).classList.remove("highlighted");
 
         }
-
     }
-
-
-
 }
 
 function getGridHtml() {
@@ -314,9 +307,9 @@ var moveCharacter = function (currentColumn, currentRow, newColumn, newRow) {
 }
 
 var resetMaze = function () {
+    resetVariables();
     document.getElementById("mazeContainer").innerHTML = "";
     loadMaze();
-    resetVariables();
     generateMaze(0);
 }
 
@@ -326,4 +319,7 @@ function resetVariables(){
     notInShortestPath = [];
     columnNumber = 0;
     rowNumber = 0;
+    pathFoundFlag = false;
+    document.getElementById('showPathRadio').checked = false;
+    document.getElementById('hidePathRadio').checked = true;
 }
