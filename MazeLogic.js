@@ -1,3 +1,4 @@
+
 var columnNumber = 0;
 var rowNumber = 0;
 var mazeSize = 20;
@@ -7,14 +8,15 @@ var bottomWall = "bottomWall";
 var leftWall = "leftWall";
 var rightWall = "rightWall";
 
-var personUnicodeSymbol = "\u26F9"
-var doorUnicodeSymbol = "\ud83d\udeaa"
+var personUnicodeSymbol = "\u26F9";
+var doorUnicodeSymbol = "\ud83d\udeaa";
 var visitedSquares = [0];
 
 var shortestPath = [];
 var notInShortestPath = [];
 
 document.addEventListener('DOMContentLoaded', function () {
+    runTests();
     loadMaze();
     generateMaze(0);
 }, false);
@@ -44,6 +46,7 @@ function loadMaze() {
 
 function solveMaze() {
 
+    var i;
     for (i = 0; i < shortestPath.length; i++) {
         document.getElementById("mazeCellRow" + getRowFromPositionNumber(shortestPath[i]) + "Column" + getColumnFromPositionNumber(shortestPath[i])).classList.add("highlighted");
     }
@@ -150,6 +153,7 @@ function generateMaze(startingPosition) {
 
                 }
                 else {
+                    var index;
                     index = allowedDirections.indexOf("up");
                     allowedDirections.splice(index, 1);
                     randomDirection = allowedDirections[Math.floor(Math.random() * allowedDirections.length)]
@@ -214,23 +218,23 @@ function generateMaze(startingPosition) {
                 return;
         }
     }
-}
+};
 
 function getPositionFromRowAndColumn(row, column) {
     return ((mazeSize * (row)) + column);
-}
+};
 
 function getRowFromPositionNumber(positionNumber) {
 
     return Math.floor(positionNumber / mazeSize);
 
-}
+};
 
 function getColumnFromPositionNumber(positionNumber) {
 
     return positionNumber % mazeSize;
 
-}
+};
 
 document.onkeydown = function (e) {
     switch (e.keyCode) {
@@ -258,7 +262,7 @@ var moveLeft = function () {
             moveCharacter(columnNumber, rowNumber, newColumnNumber, rowNumber);
         }
     }
-}
+};
 
 var moveUp = function () {
     if (rowNumber >= 0) {
@@ -269,7 +273,7 @@ var moveUp = function () {
             moveCharacter(columnNumber, rowNumber, columnNumber, newRowNumber);
         }
     }
-}
+};
 
 var moveRight = function () {
     if (columnNumber <= mazeSize - 1) {
@@ -280,7 +284,7 @@ var moveRight = function () {
             moveCharacter(columnNumber, rowNumber, newColumnNumber, rowNumber);
         }
     }
-}
+};
 
 var moveDown = function () {
     if (rowNumber <= mazeSize - 1) {
@@ -291,7 +295,7 @@ var moveDown = function () {
             moveCharacter(columnNumber, rowNumber, columnNumber, newRowNumber);
         }
     }
-}
+};
 
 
 var moveCharacter = function (currentColumn, currentRow, newColumn, newRow) {
@@ -304,14 +308,14 @@ var moveCharacter = function (currentColumn, currentRow, newColumn, newRow) {
         window.alert("You win!");
         resetMaze();
     }
-}
+};
 
 var resetMaze = function () {
     resetVariables();
     document.getElementById("mazeContainer").innerHTML = "";
     loadMaze();
     generateMaze(0);
-}
+};
 
 function resetVariables(){
     visitedSquares = [];
